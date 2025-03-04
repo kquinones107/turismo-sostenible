@@ -3,38 +3,34 @@ import React, { useState } from "react";
 interface SelectProps {
   options: string[];
   placeholder: string;
+  onChange?: (value: string) => void;
 }
 
-export const Select: React.FC<SelectProps> = ({ options, placeholder }) => {
+export const Select: React.FC<SelectProps> = ({ options, placeholder, onChange }) => {
+  const [selected, setSelected] = useState(placeholder);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const selectOption = (option: string) => {
-    setSelectedOption(option);
+  const handleSelect = (option: string) => {
+    setSelected(option);
     setIsOpen(false);
+    if (onChange) onChange(option);
   };
 
   return (
     <div className="relative w-full">
-      {/* Trigger */}
       <button
-        onClick={toggleDropdown}
         className="w-full px-4 py-2 border border-gray-300 rounded-md text-left bg-white"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        {selectedOption || placeholder}
+        {selected}
       </button>
 
-      {/* Dropdown Content */}
       {isOpen && (
         <div className="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
           {options.map((option, index) => (
             <div
               key={index}
-              onClick={() => selectOption(option)}
+              onClick={() => handleSelect(option)}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
             >
               {option}
@@ -45,3 +41,4 @@ export const Select: React.FC<SelectProps> = ({ options, placeholder }) => {
     </div>
   );
 };
+
