@@ -3,27 +3,8 @@ import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Select } from "../components/ui/select";
-
-const paquetesTuristicos = [
-  {
-    id: 1,
-    titulo: "Aventura en la Montaña",
-    descripcion: "Explora senderos naturales con guías expertos.",
-    imagen: "/images/imagen_1.png",
-    precio: "150 USD",
-    categoria: "Experiencias",
-    municipio: "Guatapé",
-  },
-  {
-    id: 2,
-    titulo: "Tour Gastronómico",
-    descripcion: "Descubre la comida típica de la región.",
-    imagen: "images/imagen_2.jpg",
-    precio: "80 USD",
-    categoria: "Experiencias",
-    municipio: "Cartagena",
-  },
-];
+import  paquetesTuristicos  from "../components/PaquetesTuristicos";
+import municipios from "../components/municipios";
 
 export default function TurismoSostenible() {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
@@ -112,17 +93,6 @@ export default function TurismoSostenible() {
           {/* Buscador */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-gray-800 mt-6">Buscar Paquetes Turísticos</h2>
-            <div className="flex gap-4 mt-4">
-              <Input
-                placeholder="¿Qué quieres explorar hoy?"
-                className="flex-1"
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-              />
-              <Button className="bg-blue-500 hover:bg-blue-600 text-white" onClick={ejecutarBusqueda}>
-                Buscar
-              </Button>
-            </div>
 
             {/* Filtros */}
             <div className="flex gap-4 mt-4">
@@ -133,7 +103,7 @@ export default function TurismoSostenible() {
               />
               <Select
                 placeholder="Municipios"
-                options={["Cartagena", "Medellín", "San Andrés", "Santa Marta"]}
+                options={municipios}
                 onChange={(value) => setMunicipioSeleccionado(value)}
               />
             </div>
@@ -176,7 +146,7 @@ export default function TurismoSostenible() {
 
           <Select
             placeholder="Selecciona una ciudad"
-            options={["Cartagena", "Medellín", "San Andrés", "Santa Marta", "Bogotá", "Cali"]}
+            options={municipios}
             onChange={(value) => setCiudadSeleccionada(value)}
           />
 
