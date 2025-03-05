@@ -30,8 +30,13 @@ export default function TurismoSostenible() {
   const [municipioSeleccionado, setMunicipioSeleccionado] = useState("");
   const [busqueda, setBusqueda] = useState("");
   const [terminoBusqueda, setTerminoBusqueda] = useState("");
-  const [reservas, setReservas] = useState<{ id: number; titulo: string }[]>([]);
+  const [reservas, setReservas] = useState<{ id: number; titulo: string; ciudad: string; categoria: string }[]>([]);
   const [vistaActual, setVistaActual] = useState("explorar"); // Controla la vista actual
+
+  // Estado para la reserva
+  const [ciudadSeleccionada, setCiudadSeleccionada] = useState("");
+  const [categoriaReserva, setCategoriaReserva] = useState("");
+  const [paqueteSeleccionado, setPaqueteSeleccionado] = useState("");
 
   // Filtrar paquetes cuando el usuario presiona "Buscar"
   const paquetesFiltrados = paquetesTuristicos.filter((paquete) => {
@@ -42,10 +47,25 @@ export default function TurismoSostenible() {
     );
   });
 
-  // Función para manejar la reserva de un paquete
-  const manejarReserva = (paqueteId: number, titulo: string) => {
-    setReservas((prev) => [...prev, { id: paqueteId, titulo }]);
-    alert(`¡Has reservado el paquete: ${titulo}!`);
+  // Función para manejar la reserva
+  const manejarReserva = (paqueteSeleccionado: string, ciudadSeleccionada: string, categoriaReserva: string) => {
+    if (!paqueteSeleccionado || !ciudadSeleccionada || !categoriaReserva) {
+      alert("Por favor, completa todos los campos.");
+      return;
+    }
+
+    // Obtener el paquete turístico seleccionado
+    const paquete = paquetesTuristicos.find((p) => p.titulo === paqueteSeleccionado);
+    if (!paquete) return;
+
+    // Agregar la reserva a la lista
+    setReservas((prev) => [...prev, { id: paquete.id, titulo: paquete.titulo, ciudad: ciudadSeleccionada, categoria: categoriaReserva }]);
+    alert(`Reserva confirmada para "${paquete.titulo}" en ${ciudadSeleccionada} (${categoriaReserva})`);
+    
+    // Limpiar los campos
+    setCiudadSeleccionada("");
+    setCategoriaReserva("");
+    setPaqueteSeleccionado("");
   };
 
   // Función que se ejecuta al presionar el botón "Buscar"
@@ -86,7 +106,7 @@ export default function TurismoSostenible() {
         </div>
       </div>
 
-      {/* Contenido Dinámico Basado en la Vista Seleccionada */}
+      {/* Explorar Paquetes */}
       {vistaActual === "explorar" && (
         <>
           {/* Buscador */}
@@ -119,60 +139,87 @@ export default function TurismoSostenible() {
             </div>
           </div>
 
-          {/* Resultados de Búsqueda */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {paquetesFiltrados.length > 0 ? (
-              paquetesFiltrados.map((paquete) => (
-                <Card key={paquete.id} className="hover:shadow-xl border border-gray-200 transition-all duration-300">
-                  <img src={paquete.imagen} alt={paquete.titulo} className="rounded-t-lg w-full h-60 object-cover" />
-                  <CardContent>
-                    <h3 className="text-lg font-semibold text-gray-800">{paquete.titulo}</h3>
-                    <p className="text-sm text-gray-600">{paquete.descripcion}</p>
-                    <p className="text-sm font-bold text-green-700">{paquete.precio}</p>
-                    <Button
-                      className="mt-4 bg-green-500 hover:bg-green-600 text-white w-full"
-                      onClick={() => manejarReserva(paquete.id, paquete.titulo)}
-                    >
-                      Reservar
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))
-            ) : (
-              <p className="text-center text-gray-600 col-span-3">No se encontraron paquetes turísticos.</p>
-            )}
+            {paquetesFiltrados.map((paquete) => (
+              <Card key={paquete.id} className="hover:shadow-xl border border-gray-200 transition-all duration-300">
+                <img src={paquete.imagen} alt={paquete.titulo} className="rounded-t-lg w-full h-60 object-cover" />
+                <CardContent>
+                  <h3 className="text-lg font-semibold text-gray-800">{paquete.titulo}</h3>
+                  <p className="text-sm text-gray-600">{paquete.descripcion}</p>
+                  <p className="text-sm font-bold text-green-700">{paquete.precio}</p>
+                  <p className="text-sm text-gray-600">{paquete.municipio}</p>
+                  <p className="text-sm text-gray-600">{paquete.categoria}</p>
+                  <hr className="my-4" />
+                  <Button 
+                  className="mt-4 bg-green-500 hover:bg-green-600 text-white w-full" 
+                  onClick={() => manejarReserva(paquete.titulo, paquete.municipio, paquete.categoria)}
+                  >
+                    Reservar
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </>
       )}
 
+      {/* Crear Reserva */}
+      {vistaActual === "crear-reserva" && (
+        <div className="mt-8 p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
+          <h2 className="text-xl font-bold text-gray-800">Crear Reserva</h2>
+
+          <Select
+            placeholder="Selecciona un paquete turístico"
+            options={paquetesTuristicos.map((p) => p.titulo)}
+            onChange={(value) => setPaqueteSeleccionado(value)}
+          />
+
+          <Select
+            placeholder="Selecciona una ciudad"
+            options={["Cartagena", "Medellín", "San Andrés", "Santa Marta", "Bogotá", "Cali"]}
+            onChange={(value) => setCiudadSeleccionada(value)}
+          />
+
+          <Select
+            placeholder="Selecciona una categoría"
+            options={["Alojamiento", "Experiencias", "Transporte", "Paquetes completos"]}
+            onChange={(value) => setCategoriaReserva(value)}
+          />
+
+          <Button className="mt-4 bg-green-500 hover:bg-green-600 text-white w-full" onClick={() => manejarReserva(paqueteSeleccionado, ciudadSeleccionada, categoriaReserva)}>
+            Confirmar Reserva
+          </Button>
+        </div>
+      )}
+
       {/* Ver Reservas */}
       {vistaActual === "ver-reservas" && (
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-md">
+        <div className="mt-8 p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
           <h2 className="text-xl font-bold text-gray-800">Reservas Realizadas</h2>
-          {reservas.length > 0 ? (
-            <ul className="list-disc pl-6">
-              {reservas.map((reserva) => (
-                <li key={reserva.id} className="text-gray-600">
-                  {reserva.titulo}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-600">No has realizado reservas aún.</p>
-          )}
+          <div className="mt-4">
+            {reservas.length === 0 && <p className="text-gray-600">No hay reservas realizadas.</p>}
+            {reservas.map((reserva) => (
+              <div key={reserva.id} className="border-b border-gray-200 py-2">
+                <p className="text-lg font-semibold text-gray-800">{reserva.titulo}</p>
+                <p className="text-sm text-gray-600">{reserva.ciudad}</p>
+                <p className="text-sm text-gray-600">{reserva.categoria}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {/* Acerca de Nosotros */}
       {vistaActual === "acerca" && (
-        <div className="mt-8 p-4 bg-white rounded-lg shadow-md">
+        <div className="mt-8 p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
           <h2 className="text-xl font-bold text-gray-800">Acerca de Nosotros</h2>
-          <p className="text-gray-600 mt-2">
-            Turismo Sostenible es una plataforma dedicada a conectar a los viajeros con experiencias auténticas y responsables
-            con el medio ambiente. Nos enfocamos en promover destinos locales y apoyar el turismo ecológico.
-          </p>
+          <p className="mt-4 text-gray-600">
+            Somos una empresa dedicada a promover el turismo sostenible en Colombia. Nuestro objetivo es conectar a los
+            viajeros con experiencias únicas y auténticas en diferentes regiones del país.
+          </p>  
         </div>
-      )}
+      )}  
+
     </div>
   );
 }
