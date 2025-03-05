@@ -4,7 +4,7 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Select } from "../components/ui/select";
 import  paquetesTuristicos  from "../components/PaquetesTuristicos";
-import municipios from "../components/municipios";
+import municipios from "../components/Municipios";
 
 export default function TurismoSostenible() {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
@@ -136,25 +136,31 @@ export default function TurismoSostenible() {
       {/* Crear Reserva */}
       {vistaActual === "crear-reserva" && (
         <div className="mt-8 p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
-          <h2 className="text-xl font-bold text-gray-800">Crear Reserva</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4">Crear Reserva</h2>
 
+          <div className="mb-4">
           <Select
             placeholder="Selecciona un paquete turístico"
             options={paquetesTuristicos.map((p) => p.titulo)}
             onChange={(value) => setPaqueteSeleccionado(value)}
           />
+        </div>
 
+        <div className="mb-4">
           <Select
             placeholder="Selecciona una ciudad"
             options={municipios}
             onChange={(value) => setCiudadSeleccionada(value)}
           />
-
+        </div>
+    
+        <div className="mb-4">
           <Select
             placeholder="Selecciona una categoría"
             options={["Alojamiento", "Experiencias", "Transporte", "Paquetes completos"]}
             onChange={(value) => setCategoriaReserva(value)}
           />
+        </div>
 
           <Button className="mt-4 bg-green-500 hover:bg-green-600 text-white w-full" onClick={() => manejarReserva(paqueteSeleccionado, ciudadSeleccionada, categoriaReserva)}>
             Confirmar Reserva
