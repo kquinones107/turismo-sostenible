@@ -5,6 +5,7 @@ import { Input } from "../components/ui/input";
 import { Select } from "../components/ui/select";
 import  paquetesTuristicos  from "../components/PaquetesTuristicos";
 import municipios from "../components/Municipios";
+import AcercaDeNosotros from "./AcercaDeNosotros";
 
 export default function TurismoSostenible() {
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("");
@@ -186,15 +187,7 @@ export default function TurismoSostenible() {
       )}
 
       {/* Acerca de Nosotros */}
-      {vistaActual === "acerca" && (
-        <div className="mt-8 p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
-          <h2 className="text-xl font-bold text-gray-800">Acerca de Nosotros</h2>
-          <p className="mt-4 text-gray-600">
-            Somos una empresa dedicada a promover el turismo sostenible en Colombia. Nuestro objetivo es conectar a los
-            viajeros con experiencias únicas y auténticas en diferentes regiones del país.
-          </p>  
-        </div>
-      )}  
+      {vistaActual === "acerca" && <AcercaDeNosotros />}
 
     </div>
   );
